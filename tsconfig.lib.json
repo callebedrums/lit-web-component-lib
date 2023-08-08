@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/my-component/build",
+    "types": [],
+    "declaration": true
+  },
+  "files": ["src/my-component/index.ts"],
+  "include": ["src/**/*.d.ts", "../types/*.d.ts"],
+  "exclude": ["src/**/*.e2e.ts"]
+}
