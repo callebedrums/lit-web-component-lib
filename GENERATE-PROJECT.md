@@ -768,6 +768,16 @@ Error - 2
 - `"pretty-check": "prettier --check src/**/*.ts"` - runs pretty to check code style
 - `"pretty-fix": "prettier --write src/**/*.ts"` - runs pretty and fix code style if possible
 
+## Component and End-2-End test
+
+1. install dependencies: `npm install --save-dev @cucumber/cucumber @playwright/test ts-node`
+2. `npx playwright install`
+3. create files cucumber.js, playwright.config.ts, features/types.ts, features/test.setup.ts
+4. create files my-component.feature, my-component.steps.ts, my-component.e2e.spec.ts
+5. add scripts to package.json
+   - "test:e2e": "playwright test --config=playwright.config.ts"
+   - "bdd": "cucumber-js"
+
 ## References
 
 [Webpack Guides](https://webpack.js.org/guides/)
