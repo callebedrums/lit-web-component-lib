@@ -534,6 +534,164 @@ module.exports = merge(common, {
 });
 ```
 
+## Testing configuration
+
+1. Install test dependencies: `npm install --save-dev karma jasmine coverage-istanbul-loader @types/jasmine @types/node karma-chrome-launcher karma-cli karma-coverage-istanbul-reporter karma-html-reporter karma-jasmine karma-json-reporter karma-junit-reporter karma-spec-reporter karma-webpack`
+2. create karma.conf.js and webpack.spec.js files
+
+```JavaScript
+// karma.conf.js
+// Karma configuration
+const path = require("path");
+
+module.exports = function (config) {
+  config.set({
+    basePath: "",
+    frameworks: ["webpack", "jasmine"],
+    plugins: [
+      "karma-jasmine",
+      "karma-webpack",
+      "karma-chrome-launcher",
+      "karma-junit-reporter",
+      "karma-html-reporter",
+      "karma-json-reporter",
+      "karma-coverage-istanbul-reporter",
+    ],
+    files: ["src/**/!(*.e2e).spec.ts"],
+    preprocessors: {
+      "src/**/*.ts": ["webpack"],
+    },
+    webpack: require(path.join(__dirname, "./webpack.spec.js")),
+    coverageIstanbulReporter: {
+      reports: ["html", "text-summary", "json-summary", "lcovonly"],
+      dir: path.join(__dirname, "./reports/coverage"),
+      combineBrowserReports: true,
+      fixWebpackSourcePaths: true,
+      "report-config": {
+        "json-summary": {
+          file: "coverage.json",
+        },
+      },
+      thresholds: {
+        emitWarning: false, // set to `true` to not fail the test command when thresholds are not met
+        // thresholds for all files
+        global: {
+          statements: 80,
+          branches: 70,
+          functions: 80,
+          lines: 80,
+        },
+      },
+    },
+    junitReporter: {
+      outputDir: path.join(__dirname, "./reports"),
+      useBrowserName: false,
+      outputFile: "results.xml",
+    },
+    jsonReporter: {
+      stdout: false,
+      outputFile: path.join(
+        __dirname,
+        "./reports/results.json"
+      ),
+    },
+    htmlReporter: {
+      outputDir: path.join(__dirname, "./reports"),
+      namedFiles: true,
+      reportName: "results",
+    },
+    reporters: ["progress", "junit", "html", "json", "coverage-istanbul"],
+    port: 9876,
+    colors: true,
+    logLevel: config.LOG_INFO,
+    autoWatch: true,
+    browsers: ["ChromeHeadless"],
+    singleRun: false,
+    concurrency: Infinity,
+  });
+};
+
+```
+
+```JavaScript
+//webpack.spec.js
+
+module.exports = {
+  mode: "development",
+  devtool: "inline-source-map",
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: ["ts-loader"],
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.ts$/,
+        exclude: /(node_modules|\.spec\.ts$)/,
+        enforce: "post",
+        use: [
+          {
+            loader: "coverage-istanbul-loader",
+            options: {
+              esModules: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.style\.s[ac]ss$/i,
+        use: [
+          "lit-scss-loader",
+          "extract-loader",
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
+        ],
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
+  stats: { warnings: false },
+  performance: {
+    hints: false,
+  },
+};
+
+```
+
+3. create a spec file to test the component: my-component/my-component.spec.ts
+
+```Typescript
+//my-component.spec.ts
+import { MyComponent } from "./my-component";
+
+describe("My Component", () => {
+  it("should create component", () => {
+    const component = new MyComponent();
+    expect(component).toBeDefined();
+  });
+});
+
+```
+
+4. add/update `test` script in package.json: `"test": "karma start karma.conf.js"`.
+5. test karma runner by executing `npm run test`. It will keep listening for file changes to re-trigger the test. Press `CTRL + C` to stop the test.
+6. run `npm run test -- --single-run` to execute the test just once.
+7. test reports were created and stored under the `/reports` folder.
+
 ## References
 
 [Webpack Guides](https://webpack.js.org/guides/)
