@@ -692,6 +692,82 @@ describe("My Component", () => {
 6. run `npm run test -- --single-run` to execute the test just once.
 7. test reports were created and stored under the `/reports` folder.
 
+## Instaling lint and prettier
+
+1. install dependencies: `npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier prettier-eslint @typescript-eslint/eslint-plugin @typescript-eslint/parser`
+2. create files .eslintignore and .eslintrc
+
+```.eslintignore
+node_modules/
+dist/
+coverage/
+reports/
+package.json
+package-lock.json
+**/tsconfig.**.json
+**/karma.conf.js
+**/tslint.json
+*.spec.ts
+*.js
+```
+
+```JSON
+// .eslintrc
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser", // Specifies the ESLint parser
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended", // Uses the recommended rules from the @typescript-eslint/eslint-plugin
+    "prettier", // Uses eslint-config-prettier to disable ESLint rules from @typescript-eslint/eslint-plugin that would conflict with prettier
+    "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
+  ],
+  "parserOptions": {
+    "ecmaVersion": 2020, // Allows for the parsing of modern ECMAScript features
+    "sourceType": "module" // Allows for the use of imports
+  },
+  // TODO change no-console property
+  "rules": {
+    "no-var": "error",
+    "@typescript-eslint/no-explicit-any": 0,
+    "no-unused-vars": 0,
+    "@typescript-eslint/no-unused-vars": ["error", { "args": "after-used" }],
+    "no-empty-function": "off",
+    "@typescript-eslint/no-empty-function": ["error"],
+    "@typescript-eslint/no-this-alias": ["error"],
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "prettier/prettier": ["error"],
+    "max-len": [
+      "error",
+      {
+        "code": 120,
+        "tabWidth": 2,
+        "ignoreComments": true,
+        "ignoreTrailingComments": true,
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true,
+        "ignoreRegExpLiterals": true
+      }
+    ]
+  }
+}
+
+/*
+Off - 0
+Warn - 1
+Error - 2
+*/
+
+```
+
+3. update package.json with the following scripts:
+
+- `"lint": "tsc --noEmit && eslint ./src --ext ts --quiet"` - runs eslint to check code quality
+- `"pretty-check": "prettier --check src/**/*.ts"` - runs pretty to check code style
+- `"pretty-fix": "prettier --write src/**/*.ts"` - runs pretty and fix code style if possible
+
 ## References
 
 [Webpack Guides](https://webpack.js.org/guides/)

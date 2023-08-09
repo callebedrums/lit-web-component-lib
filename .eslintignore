@@ -1,0 +1,11 @@
+node_modules/
+dist/
+coverage/
+reports/
+package.json
+package-lock.json
+**/tsconfig.**.json
+**/karma.conf.js
+**/tslint.json
+*.spec.ts
+*.js

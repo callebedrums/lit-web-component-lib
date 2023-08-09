@@ -10,7 +10,7 @@ export class MyComponent extends LitElement {
   myProp: string = "";
 
   protected render() {
-    console.log('render')
+    console.log("render");
     return html`<h1>${this.myProp}</h1>`;
   }
 }
